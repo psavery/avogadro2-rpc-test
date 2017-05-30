@@ -35,10 +35,6 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  // Now let's set up a datastream to write to it
-  QDataStream dataStream(&socket);
-  dataStream.setVersion(QDataStream::Qt_4_8);
-
   QJsonObject params;
   params["format"] = "xyz";
   // Methane
@@ -58,6 +54,11 @@ int main(int argc, char* argv[])
 
   QJsonDocument document(message);
   QByteArray data = document.toJson();
+
+  // Now let's set up a datastream to write to it
+  QDataStream dataStream(&socket);
+  dataStream.setVersion(QDataStream::Qt_4_8);
+
 #ifdef _WIN32
   // Windows can't do QDataStream << QByteArray correctly if the device is a
   // QLocalSocket because it will send two packets. We need to send the data
