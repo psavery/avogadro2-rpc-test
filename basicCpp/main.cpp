@@ -19,6 +19,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLocalSocket>
+#include <QThread>
 
 int main(int argc, char* argv[])
 {
@@ -57,7 +58,6 @@ int main(int argc, char* argv[])
 
   QJsonDocument document(message);
   QByteArray data = document.toJson();
-
 #ifdef _WIN32
   // Windows can't do QDataStream << QByteArray correctly if the device is a
   // QLocalSocket because it will send two packets. We need to send the data
@@ -70,6 +70,8 @@ int main(int argc, char* argv[])
   // Easy way of sending the data.
   dataStream << data;
 #endif
+  // We need to wait a short amount of time before processing events
+  QThread::msleep(10);
   // We have to process events to get the message sent to Avogadro2
   app.processEvents();
   socket.disconnectFromServer();
